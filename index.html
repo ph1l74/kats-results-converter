@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Каменный Цветок 2019 - Результаты</title>
+    <!-- <link rel="stylesheet" href="styles/mystyle.css"> -->
+    <script src='scripts/jquery.min.js'></script>
+    <script src='scripts/fileserver.min.js'></script>
+    <script src='scripts/xlsx.full.min.js'></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0px;
+            font-size: 1em;
+            font-weight: 400;
+            font-family: 'Open Sans', 'Roboto', sans-serif;
+        }
+
+        .container {
+            /* width: 40%; */
+            height: 100%;
+            overflow: auto;
+            margin: auto;
+        }
+
+        input {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .image {
+            width: 500px;
+            margin: 20px auto;
+            height: 15%;
+        }
+
+        .image img {
+            width: 500px;
+        }
+
+        #wrapper {
+            transition: 0.5s all;
+            width: 24px;
+            height: 24px;
+            margin: auto;
+            color: rgb(0, 141, 104);
+            cursor: pointer;
+        }
+
+        #wrapper:hover {
+            color: rgb(6, 171, 136);
+        }
+
+        .label {
+            transition: all 1s ease;
+            opacity: 0;
+        }
+
+        #wrapper:hover div.label {
+            opacity: 1;
+        }
+
+        #table-wrapper {
+            height: 80%;
+            overflow: hidden;
+        }
+
+        label {
+            cursor: pointer;
+
+        }
+
+        table {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            padding-right: 17px;
+            /* Increase/decrease this value for cross-browser compatibility */
+            box-sizing: content-box;
+            /* So the width will be 100% + 17px */
+            border-spacing: 0px;
+            margin: auto;
+            width: 96%;
+        }
+
+        tr:nth-child(1) td:nth-child(1) {
+            border-top-left-radius: 6px;
+        }
+
+        tr:nth-child(1) td:nth-last-child(1) {
+            border-top-right-radius: 6px;
+        }
+
+        tr:nth-last-child(1) td:nth-child(1) {
+            border-bottom-left-radius: 6px;
+        }
+
+        tr:nth-last-child(1) td:nth-last-child(1) {
+            border-bottom-right-radius: 6px;
+        }
+
+        tr:nth-child(2) {
+            background: rgba(0, 141, 103, 0.35);
+        }
+
+        tr:nth-child(odd) {
+            background: rgba(0, 141, 103, 0.35);
+        }
+
+        tr td:nth-child(1) {
+            text-align: center;
+        }
+
+        tr td:nth-child(2) {
+            text-align: left;
+            font-weight: 700;
+        }
+
+        tr:nth-child(1) {
+            font-weight: 700;
+        }
+
+         /* tr:nth-child(1) td:nth-child(n+3) { */
+            /* width: 20px; */
+        /* }  */
+
+        td:nth-child(n+3) {
+            text-align: center;
+        }
+
+        td:nth-last-child(1) {
+            text-align: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='container'>
+        <div class="image">
+            <img src="logo.png" \>
+        </div>
+        <div id='wrapper'>
+            <label for="table-input">
+                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="folder-open"
+                    class="svg-inline--fa fa-folder-open fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 576 512">
+                    <path fill="currentColor"
+                        d="M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 117.989 224 152 224z">
+                    </path>
+                </svg>
+            </label>
+            <!-- <div class='label'>Открыть файл </div> -->
+            <input type='file' id='table-input' />
+        </div>
+        <div id='table-wrapper'>
+        </div>
+    </div>
+
+    <script>
+        $('#table-input').change(function (e) {
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(e.target.files[0]);
+            reader.onload = function (e) {
+                $('#wrapper').hide();
+                var data = new Uint8Array(reader.result);
+                var wb = XLSX.read(data, { type: 'array' });
+                var ws = wb.Sheets['Результат'];
+                var wsHTML = XLSX.utils.sheet_to_html(ws);
+                $('#table-wrapper').append(wsHTML);
+
+                var wrapperHeight = $('#table-wrapper').height()
+                var tableHeight = $('#table-wrapper table').first().height();
+
+                function scrollToBottom(delay) {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(
+                                $("#table-wrapper").animate({ scrollTop: $('#table-wrapper').height() }, 8000, "linear")
+                            )
+                        }, delay);
+                    })
+                }
+
+                function scrollToTop(delay) {
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(
+                                $("#table-wrapper").animate({ scrollTop: 0}, 8000, "linear")
+                            )
+                        }, delay);
+                    })
+                }
+
+                if (tableHeight > wrapperHeight) {
+                    function scrollLoop(delay) {
+                        scrollToBottom(delay)
+                            .then(function () {
+                                scrollToTop(delay).then(
+                                    function () {
+                                        setTimeout(function () {
+                                            scrollLoop(delay);
+                                        }, delay)
+                                    }
+                                )
+                            }
+                            )
+                    }
+                    scrollLoop(30000);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
